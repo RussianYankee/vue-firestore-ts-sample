@@ -13,15 +13,25 @@ service cloud.firestore {
 	match /companies/{companyId} {
 	  allow create: if isSignedIn();
       allow read, write: if isSignedIn() && getUserData().company == companyId;
+	}
 
-		match /invitations/{inviteId} {
-			allow create: if isSignedIn() && getUserData().company == companyId;
-			allow read, write: if isSignedIn() && getUserData().company == companyId;
-	  	}
+	match /invitations/{invitationId} {
+	 allow create: if isSignedIn() && hasAuthority("canWriteThat");
+	 allow read: if isSignedIn() && hasAuthority("canReadThis");
+	 allow write: if isSignedIn() && hasAuthority("canWriteThat");
 	}
 	// Functions //
 	  function isSignedIn() {
 		return request.auth != null;
+	  }
+
+	  function hasAuthority(authority) {
+		  return authority in request.auth.token.authorities
+	  }
+
+	  // authorities - is array of strings
+	  function hasAuthorities(authorities) {
+		  return request.auth.token.authorities.hasAll(authorities)
 	  }
 
 	  function isOwner(id) {
@@ -49,7 +59,7 @@ service cloud.firestore {
 	  }
 
 	  function getCompanyData() {
-		  return get(/databases/$(database)/documents/companies/$(request.auth.uid)).data;
+		return get(/databases/$(database)/documents/companies/$(request.auth.uid)).data;
 	  }
   }
 }
