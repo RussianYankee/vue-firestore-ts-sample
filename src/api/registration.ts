@@ -1,6 +1,9 @@
 import {auth, getRef, getRefWithGeneratedId} from "./firebase-app.ts";
 import {createUserWithEmailAndPassword} from "firebase/auth";
 import {setDoc} from "firebase/firestore/lite";
+import {request} from "../assets/ts/requester.ts";
+
+const backend_url= "http://localhost:3000/signup"
 
 function registerBusiness(email: string, password: string) {
     createUserWithEmailAndPassword(auth, email, password)
@@ -8,6 +11,13 @@ function registerBusiness(email: string, password: string) {
             const user = userCredential.user;
             console.log('[SERVER]: business=', user)
             const companyRef = getRefWithGeneratedId('companies')
+            const token= await user.getIdToken()
+            console.log('[SERVER]: token= ', token)
+            request.doPost(backend_url, {
+                token: token,
+                membership: 'free',
+                role: 'technician'
+            }).then((response) => console.log('[SERVER]: post response=', response))
             await  setDoc(companyRef,
                 {
                     owner: user.uid,

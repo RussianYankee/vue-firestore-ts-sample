@@ -12,7 +12,7 @@ function createUser(email: string, password: string) {
         .then((userCredential) => {
             // Signed up
             const user = userCredential.user;
-            console.log('[SERVER]: user=', user)
+            console.log('[SERVER]: user=', user.toJSON())
             // ...
         })
         .catch((error) => {
@@ -29,7 +29,7 @@ function signInWithEmail(email: string, password: string) {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user: User = userCredential.user;
-                console.log('[SERVER]: uid=', user.uid)
+                console.log('[SERVER]: userJSON=', user.toJSON())
                 resolve(true)
             }).catch((error) => {
                 console.log(`[ERROR]: ${error.code} - ${error.message}`)
