@@ -1,17 +1,17 @@
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "firebase/app";
 import {
-    getFirestore,
     addDoc,
-    getDocs,
     collection,
-    doc,
     deleteDoc,
-    setDoc,
+    doc,
+    DocumentData,
+    getDocs,
+    getFirestore,
     serverTimestamp,
-    DocumentData
+    setDoc
 } from "firebase/firestore/lite"
-import { getAuth } from 'firebase/auth'
+import {getAuth} from 'firebase/auth'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -39,17 +39,18 @@ function addNewDoc<T extends DocumentData>(collectionName: string, data: T) {
     } catch (e) {
         console.error("Can't add document: ", e)
     }
-
 }
 
 function getDocsFromCollection(collectionName: string) {
-    getDocs(collection(firestoreDB, collectionName))
-        .then(snapshot => snapshot
-            .forEach(doc => console.log(`${doc.id} => ${doc.data()}`)))
+    return getDocs(collection(firestoreDB, collectionName))
 }
 
-function getRef(collectionName: string, id: string) {
-    return doc(firestoreDB, collectionName, id)
+function getRefWithGeneratedId(path: string){
+    return doc(collection(firestoreDB, path))
+}
+
+function getRef(...pathArg: string[]) {
+    return doc(firestoreDB, '/', ...pathArg)
 }
 
 function deleteDocument(collectionName: string, id: string) {
@@ -57,11 +58,21 @@ function deleteDocument(collectionName: string, id: string) {
 }
 
 function createOrUpdate(collectionName: string, id: string, data: unknown) {
-    setDoc(getRef(collectionName, id), data)
+    return setDoc(getRef(collectionName, id), data)
 }
 
 function updateTimestamp(collectionName: string, id: string) {
-    setDoc(getRef(collectionName, id), { changed: serverTimestamp() })
+    return setDoc(getRef(collectionName, id), { changed: serverTimestamp() })
 }
 
-export {addNewDoc, getDocsFromCollection, getRef, deleteDocument, createOrUpdate, updateTimestamp, auth, firestoreDB}
+export {
+    addNewDoc,
+    getDocsFromCollection,
+    getRef,
+    deleteDocument,
+    createOrUpdate,
+    updateTimestamp,
+    getRefWithGeneratedId,
+    auth,
+    firestoreDB
+}

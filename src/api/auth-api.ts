@@ -24,22 +24,18 @@ function createUser(email: string, password: string) {
 
 }
 
-function signInWithEmail(email: string, password: string): boolean {
-    let result = false
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in
-            const user: User = userCredential.user;
-            console.log('[SERVER]: uid=', user.uid)
-            result = true
-            // ...
-        })
-        .catch((error) => {
-            // const errorCode = error.code;
-            // const errorMessage = error.message;
-            console.log(`[ERROR]: ${error.code} - ${error.message}`)
-        });
-    return result
+function signInWithEmail(email: string, password: string) {
+    return new Promise<boolean> ((resolve, reject) => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user: User = userCredential.user;
+                console.log('[SERVER]: uid=', user.uid)
+                resolve(true)
+            }).catch((error) => {
+                console.log(`[ERROR]: ${error.code} - ${error.message}`)
+                reject(`[ERROR]: ${error.code} - ${error.message}`)
+            });
+    })
 }
 
 function onAuthStateChange() {

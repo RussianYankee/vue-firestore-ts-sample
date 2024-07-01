@@ -17,24 +17,40 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import {createUser, signInWithEmail} from "../api/auth-api.ts";
+import {signInWithEmail} from "../api/auth-api.ts";
 import {useRouter} from "vue-router";
+import {registerBusiness, registerEmployee} from "../api/registration.ts";
 
 const login = ref("")
 const password = ref("")
 
 const router = useRouter()
 
+const props = defineProps({
+  id: {
+    type: String,
+    default: ''
+  }
+})
+
 function register() {
   console.log('[REGISTER]')
-  createUser(login.value, password.value)
+  // createUser(login.value, password.value)
+  if (props.id !== '') {
+    registerEmployee(props.id, login.value, password.value)
+  } else {
+    registerBusiness(login.value, password.value)
+  }
 }
 
 function signIn() {
-  console.log('[SIGN IN]')
-  if (signInWithEmail(login.value, password.value)) {
-    router.push('/private')
-  }
+  signInWithEmail(login.value, password.value)
+      .then((loggedIn) => {
+        console.log('[SIGN IN]', loggedIn)
+        if (loggedIn) {
+          router.push('/private')
+        }
+      })
 }
 
 

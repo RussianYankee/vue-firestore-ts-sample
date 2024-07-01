@@ -9,11 +9,13 @@
 
 <script setup lang="ts">
 import {signUserOut} from "../api/auth-api.ts"
+import {useRouter} from "vue-router";
 
+const router = useRouter();
 function signOut() {
   console.log('[SIGN OUT]')
   signUserOut()
-
+  router.push('/login')
 }
 </script>
 

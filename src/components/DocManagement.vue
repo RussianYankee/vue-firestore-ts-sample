@@ -19,9 +19,11 @@
 import {ref} from "vue";
 import {addNewUser, deleteUser} from "../api/user-api.ts";
 import {getDocsFromCollection} from "../api/firebase-app.ts";
+import {DocumentData, QueryDocumentSnapshot} from "firebase/firestore/lite";
 
 const count = ref(0)
 const userId = ref("")
+const list = ref([] as QueryDocumentSnapshot<DocumentData, DocumentData>[])
 
 function click() {
   addNewUser(
@@ -43,6 +45,7 @@ function deleteUsr() {
 
 function listAll() {
   getDocsFromCollection('users')
+      .then(snapshot => list.value = snapshot.docs)
 }
 </script>
 
