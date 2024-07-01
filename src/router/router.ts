@@ -7,13 +7,24 @@ const router = createRouter({
     routes: [
         { path: '/', component: () => import('../components/HomePage.vue') },
         { path: '/login', component: () => import('../components/SignIn.vue') },
+        { path: '/signup', component: () => import('../components/SignIn.vue') },
+        { path: '/signup/:invitationId',
+            component: () => import('../components/SignIn.vue'),
+            props: true
+        },
         { path: '/private',
           component: () => import('../components/PrivateInfo.vue'),
           meta: {
               requiresAuth: true
           }
         },
-        { path: '/docs', component: () => import('../components/DocManagement.vue') }
+        {
+          path: '/docs',
+          component: () => import('../components/DocManagement.vue'),
+          meta: {
+              requiresAuth: true
+          }
+        }
     ]
 })
 
